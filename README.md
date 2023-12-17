@@ -51,9 +51,9 @@ If you've docker installed then it's time to create a docker image of your proje
 
 ```
 FROM openjdk:8-jdk-alpine 
-ARG JAR_FILE=target/springboot.jar 
-COPY ${JAR_FILE} springboot.jar 
-ENTRYPOINT ["java","-jar","/springboot.jar"] 
+ARG JAR_FILE=target/spring-mysql-docker.jar 
+COPY ${JAR_FILE} spring-mysql-docker.jar 
+ENTRYPOINT ["java","-jar","/spring-mysql-docker.jar"] 
 EXPOSE 8080
 ```
 
@@ -70,9 +70,9 @@ EXPOSE: It's optional, if you need your application to be run on a different por
 Now it's time to build the project. All you have to do is first change the database credentials from the application.properties file according to yours and clean install your project once to get things reflected.
 
 ```
-spring.datasource.url = jdbc:mysql://springboot-db:3306/USERS?useSSL=true&allowPublicKeyRetrieval=true
-spring.datasource.username = rohit 
-spring.datasource.password = 1234 \
+spring.datasource.url = jdbc:mysql://spring-mysql-docker-db:3306/demo?useSSL=true&allowPublicKeyRetrieval=true
+spring.datasource.username = root 
+spring.datasource.password = root \
 spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5InnoDBDialect 
 spring.jpa.hibernate.ddl-auto = update 
 logging.level.org.hibernate.SQL=DEBUG 
@@ -81,7 +81,7 @@ logging.level.org.hibernate.type=TRACE
 
 Here we've hardcoded everything but once you switch to Kubernetes from Docker, these hardcoded parameters will turn into loosely coupled parameters that will see it later. Here only one thing to keep in mind, the URL of the data source.
 
-If you remember here then we've been using localhost in the URL which should not be the case when deploying to docker because docker containers usually don't interact with the localhost database because docker provides you with all kinds of containers which you need and MySQL is also one of them. Every container is known by its name in the network so you must provide the name of the container here rather than localhost because this is important. Just change it to your desired container name, in my case it is springboot-db.
+If you remember here then we've been using localhost in the URL which should not be the case when deploying to docker because docker containers usually don't interact with the localhost database because docker provides you with all kinds of containers which you need and MySQL is also one of them. Every container is known by its name in the network so you must provide the name of the container here rather than localhost because this is important. Just change it to your desired container name, in my case it is spring-mysql-docker-db.
 
 Now everything seems to be right. Go the project root path and hit
 
@@ -89,15 +89,15 @@ Now everything seems to be right. Go the project root path and hit
 mvn eclipse:eclipse && mvn clean install
 ```
 
-Note: mvn eclipse command is optional. If you're working on the command line only, use mvn clean install only. With the above command, the jar file will be generated which is an input to the Dockerfile. The name of the jar must be the same as what you have provided in the Dockerfile, in my case, it's springboot.jar
+Note: mvn eclipse command is optional. If you're working on the command line only, use mvn clean install only. With the above command, the jar file will be generated which is an input to the Dockerfile. The name of the jar must be the same as what you have provided in the Dockerfile, in my case, it's spring-mysql-docker.jar
 
 To build a docker image, hit the below command
 
 ```
-docker build -t springboot:1.0 .
+docker build -t spring-mysql-docker:1.0 .
 ```
 
-Note: Don't forget to put the period in the end, it represents the entire files, folders available in the path that is going to be used in building a single image. Change the springboot to whatever name you want to give to your docker image, if not then let it be as it is. In the end, there is a tag that shows which version of the image you're building if you're dealing with so many versions of the same project then this can be of great use.
+Note: Don't forget to put the period in the end, it represents the entire files, folders available in the path that is going to be used in building a single image. Change the spring-mysql-docker to whatever name you want to give to your docker image, if not then let it be as it is. In the end, there is a tag that shows which version of the image you're building if you're dealing with so many versions of the same project then this can be of great use.
 
 So you've built the image but with just a Spring Boot image, you won't be able to run the application, along with this you need the mysql image as well which can be pulled with the below command.
 
@@ -120,9 +120,9 @@ In the clone project, you'll see one file named as docker-compose.yml
 ```
 version: '3'
 services:
-    springboot:
-        container_name: springboot
-        image: 100598/springboot:1.0
+    spring-mysql-docker:
+        container_name: spring-mysql-docker
+        image: {hub-username}/spring-mysql-docker:1.0
         ports: 
         - 9090:8080
     mysql:
@@ -130,9 +130,9 @@ services:
         image: mysql:5.7
         environment:
         - MYSQL_ROOT_PASSWORD=root
-        - MYSQL_USER=rohit
-        - MYSQL_PASSWORD=1234
-        - MYSQL_DATABASE=USERS
+        - MYSQL_USER=root
+        - MYSQL_PASSWORD=root
+        - MYSQL_DATABASE=demo
         volumes:
         - appvolume:/var/lib/mysql
 volumes:
@@ -149,9 +149,9 @@ Change the image name if you've a different name for your image. Also, the tag n
 
 ```
 MYSQL_ROOT_PASSWORD=root // it should be root always 
-MYSQL_USER=rohit // it will auto create the user 
-MYSQL_PASSWORD=1234 // it will auto set the password for the above user 
-MYSQL_DATABASE=USERS // it will auto create the database
+MYSQL_USER=root // it will auto create the user 
+MYSQL_PASSWORD=root // it will auto set the password for the above user 
+MYSQL_DATABASE=demo // it will auto create the database
 ```
 
 Note: The root password should match with your own root password which is by default root. If you have modified then do changes here also.
