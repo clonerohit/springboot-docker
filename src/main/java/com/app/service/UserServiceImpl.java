@@ -1,4 +1,4 @@
-package com.introwit.service;
+package com.app.service;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,10 +12,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.introwit.model.Role;
-import com.introwit.model.User;
-import com.introwit.repository.UserRepository;
-import com.introwit.web.dto.UserRegistrationDto;
+import com.app.model.Role;
+import com.app.model.User;
+import com.app.repository.UserRepository;
+import com.app.dto.UserRegistrationDto;
 
 @Service
 public class UserServiceImpl implements UserService{

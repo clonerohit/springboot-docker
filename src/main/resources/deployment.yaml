@@ -1,9 +1,9 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: springboot
+  name: spring-mysql-docker
   labels:
-    name: springboot
+    name: spring-mysql-docker
 spec:
   ports:
     - nodePort: 30164 
@@ -11,27 +11,27 @@ spec:
       targetPort: 8080  
       protocol: TCP
   selector:           
-    app: springboot
+    app: spring-mysql-docker
   type: LoadBalancer       
 
 ---
 apiVersion: apps/v1 
 kind: Deployment    
 metadata:              
-  name: springboot
+  name: spring-mysql-docker
 spec:                
   selector:         
     matchLabels:
-      app: springboot
+      app: spring-mysql-docker
   replicas: 3        
   template:
     metadata:
       labels:        
-        app: springboot
+        app: spring-mysql-docker
     spec:
       containers:
-        - name: springboot
-          image: 100598/springboot:1.0
+        - name: spring-mysql-docker
+          image: 100598/spring-mysql-docker:1.0
           ports:
             - containerPort: 8080                
           env:   # Setting Enviornmental Variables

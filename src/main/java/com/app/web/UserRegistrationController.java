@@ -1,14 +1,13 @@
-package com.introwit.web;
+package com.app.web;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.introwit.service.UserService;
-import com.introwit.web.dto.UserRegistrationDto;
+import com.app.service.UserService;
+import com.app.dto.UserRegistrationDto;
 
 @Controller
 @RequestMapping("/registration")
